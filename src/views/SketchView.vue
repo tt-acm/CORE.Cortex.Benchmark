@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class='horizontal'>
-      <div class='m-5' style='width: 50vw;'>
+      <div class='mx-3 mt-5' style='width: 50vw;'>
         <div class='horizontal py-2'>
           <label style='width: 37vw; text-align: left;'>Number of Stories</label>
           <label style='width: 7vw'>1</label>
@@ -113,13 +113,36 @@
         </div>
       </div>
       <div>
-        <div style='content-align: center; width: 50vw; height: 500px'>
+        <div style='content-align: center;'>
           <div v-if='loading' class='spinner-border text-primary' role='status'/>
-          <svg v-show='!loading' xmlns='http://www.w3.org/2000/svg' transform='scale(1,-1)' width='50vw' height='500' viewBox='0 0 16 16'>
-          </svg>
-          <div>
-            <h1><span class='badge bg-primary mt-2' id='highlightedProfile'></span></h1>
-            <h3><span class='badge bg-secondary mt-1' id='highlightedMemberType'></span></h3>
+          <div class="horizontal">
+            <div class="mt-5 mr-4">
+            <svg v-show='!loading' xmlns='http://www.w3.org/2000/svg' transform='scale(1,-1)' width='20vw' height='500' viewBox='0 0 16 16'>
+            </svg>
+              <div>
+                <h1><span class='badge bg-primary mt-2' id='highlightedProfile'></span></h1>
+                <h3><span class='badge bg-secondary mt-1' id='highlightedMemberType'></span></h3>
+              </div>
+            </div>
+            <table class="table table-bordered mt-5 mx-4" style='display: flex;' v-if="results.finalSections.length > 0">
+            <tbody>
+              <tr>
+                <th>Level</th>
+                <th colspan="2">Column</th>
+                <th colspan="2">Beam</th>
+                <th colspan="2">Brace</th>
+              </tr>
+              <tr v-for="(section, i) in results.finalSections.slice().reverse()" :key='i'>
+                <th scope="row">{{ results.finalSections.length - i }}</th>
+                <th :style="section.columnTableStyle"></th>
+                <td>{{ section.column }}</td>
+                <th :style="section.beamTableStyle"></th>
+                <td>{{ section.beam }}</td>
+                <th :style="section.braceTableStyle"></th>
+                <td>{{ section.brace}}</td>
+              </tr>
+            </tbody>
+          </table>
           </div>
         </div>
       </div>
@@ -288,7 +311,6 @@ export default defineComponent({
         document.getElementById('highlightedProfile').innerHTML = sxn
         document.getElementById('highlightedMemberType').innerHTML = type
         e.currentTarget.setAttribute('stroke-opacity', '1')
-        console.log('mouseenter!')
         // e.currentTarget.setAttribute('stroke-dasharray', '0.5,0.5')
         // e.currentTarget.style.strokeWidth = '2px'
       })
@@ -297,7 +319,6 @@ export default defineComponent({
         document.getElementById('highlightedProfile').innerHTML = null
         document.getElementById('highlightedMemberType').innerHTML = null
         e.currentTarget.setAttribute('stroke-opacity', '0')
-        console.log('mouseexit!')
         // e.currentTarget.removeAttribute('stroke-dasharray')
         // e.currentTarget.style.strokeWidth = width
       })
@@ -400,10 +421,13 @@ export default defineComponent({
           newColumnSxns.push({
             column: sxns[0],
             columnColor: this.colors[s[0]],
+            columnTableStyle: 'width: 25px; background-color: #' + this.colors[s[0]] + ';',
             beam: sxns[1],
             beamColor: this.colors[s[1]],
+            beamTableStyle: 'width: 25px; background-color: #' + this.colors[s[1]] + ';',
             brace: sxns[2],
-            braceColor: this.colors[s[2]]
+            braceColor: this.colors[s[2]],
+            braceTableStyle: 'width: 25px; background-color: #' + this.colors[s[2]] + ';'
           })
         })
         this.results.finalSections = newColumnSxns
@@ -530,7 +554,7 @@ th {
 }
 
 svg{
-    display: block;
+    display: flex;
     margin: auto;
 }
 </style>
